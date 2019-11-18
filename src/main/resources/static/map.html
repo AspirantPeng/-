@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+        body, html,#allmap {width: 100%;height: 100%;overflow: hidden;margin:0;font-family:"微软雅黑";}
+    </style>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=GqMS4r4wP8zEQkyXtTRVR60HOKwm7DVv"></script>
+    <script type="text/javascript" src="js/DrawingManager.js"></script>
+    <script type="text/javascript" src="js/util.js"></script>
+    <script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
+    <link rel="stylesheet" href="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.css" />
+    <script type="text/javascript" src="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.js"></script>
+    <link rel="stylesheet" href="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.css" />
+    <style type="text/css">
+        *{
+            padding: 0;
+            margin: 0;
+        }
+
+
+        /* 下面是搜索框样式 */
+        .searchBox{
+            width: 40%;
+            height: 35px;
+            border: 1px solid cadetblue;
+            outline: hidden;
+            border-radius: 2px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .inputBox{
+            border: none;
+            width: 40%;
+            height: 35px;
+            line-height: 35px;
+            outline: none;
+            padding-left: 10px;
+            /* 改变光标的颜色 */
+            caret-color:#008B8B;
+            font-size: 14px;
+        }
+
+
+
+        .searchBtn{
+            width: 65px;
+            height: 35px;
+            border: 1px ;
+            position: absolute;
+            right: 0px;
+            outline: none;
+            color: white;
+            font-size: 15px;
+            background-color: cornflowerblue;
+        }
+
+        /* 鼠标滑过按钮时背景色改变 */
+        .searchBtn:hover{
+            background-color: #497fdf;
+        }
+    </style>
+    <title>社区管理系统</title>
+</head>
+<body>
+
+
+
+
+<div id="nav" style=" line-height:30px;
+    background-color:#eeeeee;
+    height:100%;
+    width:30%;
+    float:left;
+    padding:5px;	">
+    <h1>系统设置</h1><br>
+    <h2>地图定位</h2>
+    城市：
+    <input type="text"autocomplete="off" id="city" onFocus="this.value=''" value="武汉">
+    <button onclick="cityLocation()">定位</button>
+    <br>
+    经度：
+    <input type="text"autocomplete="off" onFocus="this.value=''" value="114.42255349999999" id="lng" >
+    纬度：
+    <input type="text"autocomplete="off" onFocus="this.value=''" value="30.510981" id="lat" >
+    <button onclick="gpsLocation()">定位</button>
+    <br>   <br>   <br>
+
+    <h2>标记设定</h2>
+    <br><h3>人口数</h3>
+    低于1000：
+    <select id="lt1000">
+        <option value ="img/a.jpg">红色梅花</option>
+        <option value ="img/c.jpg">蓝色梅花</option>
+        <option value ="img/d.jpg">紫色梅花</option>
+    </select><br>
+    低于2000：
+    <select id="lt2000">
+        <option value ="img/c.jpg">蓝色梅花</option>
+        <option value ="img/a.jpg">红色梅花</option>
+        <option value ="img/d.jpg">紫色梅花</option>
+
+    </select><br>
+    高于2000：
+    <select id="mt2000">
+        <option value ="img/d.jpg">紫色梅花</option>
+        <option value ="img/a.jpg">红色梅花</option>
+        <option value ="img/c.jpg">蓝色梅花</option>
+    </select><br>
+    <br> <h3>房屋数量</h3>
+    少于10栋：
+    <select id="lt10">
+        <option value ="img/b.jpg">红色三角</option>
+        <option value ="img/e.jpg">蓝色三角</option>
+    </select><br>
+    多余10栋：
+    <select id="mt10">
+        <option value ="img/e.jpg">蓝色三角</option>
+        <option value ="img/b.jpg">红色三角</option>
+    </select><br>
+    <br><h3>小区建设年份</h3>
+    早于2000年：
+    <select id="before2000">
+        <option value ="img/f.jpg">红色方块</option>
+        <option value ="img/g.jpg">蓝色方块</option>
+        <option value ="img/h.jpg">绿色方块</option>
+    </select><br>
+    早于2010年：
+    <select id="before2010">
+        <option value ="img/g.jpg">蓝色方块</option>
+        <option value ="img/f.jpg">红色方块</option>
+        <option value ="img/h.jpg">绿色方块</option>
+    </select><br>
+    晚于2010年：
+    <select id="after2010">
+        <option value ="img/h.jpg">绿色方块</option>
+        <option value ="img/f.jpg">红色方块</option>
+        <option value ="img/g.jpg">蓝色方块</option>
+
+    </select><br>
+
+    <button onclick="addLabel()">添加标签</button>&nbsp;
+    <button onclick="clearLabel()">清除标签</button>
+</div>
+
+<div id="allmaps" style="width:69%;height:100%;float:right;">
+    <div class="searchBox">
+        <input class="inputBox" autocomplete="off" id="keyword"  placeholder="请输入小区名或门牌号">
+        <button class="searchBtn" onclick="fnSearch()">搜索</button>
+    </div>
+    <div id="allmap"></div>
+</div>
+
+<script type="text/javascript" src="js/BMap.js">
+</script>
+</body>
+</html>
+
+
+
+
